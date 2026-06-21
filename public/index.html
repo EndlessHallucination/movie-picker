@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Movie Picker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Movie Picker</h1>
+
+    <div id="add-movie">
+      <input type="text" id="title-input" placeholder="Movie title" />
+      <button id="add-btn">Add</button>
+    </div>
+
+    <label>
+      <input type="checkbox" id="ignore-watched-checkbox" checked />
+      Ignore watched movies
+    </label>
+
+    <div id="movie-list"></div>
+
+    <button id="randomize-btn">What are we watching?</button>
+
+    <div id="result"></div>
+
+    <script type="module" src="/dist/app.js"></script>
+  </body>
+</html>

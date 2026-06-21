@@ -20,7 +20,9 @@ interface Movie {
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static('public'))
+app.use(express.static('public'));
+app.use('/dist', express.static('dist'));
+
 
 app.get('/movies', (req, res) => {
 
