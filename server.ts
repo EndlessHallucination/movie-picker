@@ -25,11 +25,14 @@ app.use('/dist', express.static('dist'));
 
 
 app.get('/movies', (req, res) => {
-
-    const moviesString = fs.readFileSync(MOVIES_FILE, 'utf-8');
-    const movies: Movie[] = JSON.parse(moviesString);
-    res.json(movies);
-
+    try {
+        const moviesString = fs.readFileSync(MOVIES_FILE, 'utf-8');
+        const movies: Movie[] = JSON.parse(moviesString);
+        res.json(movies);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Could not read movies" });
+    }
 })
 
 
@@ -73,40 +76,35 @@ app.post("/movies", async (req, res) => {
 
 app.delete('/movies/:id', (req, res) => {
     const { id } = req.params;
-
-    const fileData = fs.readFileSync(MOVIES_FILE, 'utf-8');
-    const movies: Movie[] = JSON.parse(fileData)
-
-    const updatedMovies = movies.filter(movie => movie.id !== Number(id))
-
-
-    fs.writeFileSync(
-        MOVIES_FILE,
-        JSON.stringify(updatedMovies)
-    )
-    res.json(updatedMovies);
-
+    try {
+        const fileData = fs.readFileSync(MOVIES_FILE, 'utf-8');
+        const movies: Movie[] = JSON.parse(fileData);
+        const updatedMovies = movies.filter(movie => movie.id !== Number(id));
+        fs.writeFileSync(MOVIES_FILE, JSON.stringify(updatedMovies, null, 2));
+        res.json(updatedMovies);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Could not delete movie" });
+    }
 });
 
 app.patch('/movies/:id', (req, res) => {
     const { id } = req.params;
     const { watched } = req.body;
-
-    const fileData = fs.readFileSync(MOVIES_FILE, 'utf-8');
-    const movies: Movie[] = JSON.parse(fileData)
-
-    const movie: Movie | undefined = movies.find(movie => movie.id === Number(id))
-    if (!movie) {
-        return res.status(404).json({ message: "Movie not found" });
+    try {
+        const fileData = fs.readFileSync(MOVIES_FILE, 'utf-8');
+        const movies: Movie[] = JSON.parse(fileData);
+        const movie = movies.find(movie => movie.id === Number(id));
+        if (!movie) {
+            return res.status(404).json({ message: "Movie not found" });
+        }
+        movie.watched = Boolean(watched);
+        fs.writeFileSync(MOVIES_FILE, JSON.stringify(movies, null, 2));
+        res.json(movie);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Could not update movie" });
     }
-
-    movie.watched = Boolean(watched);
-
-    fs.writeFileSync(
-        MOVIES_FILE,
-        JSON.stringify(movies, null, 2)
-    );
-    res.json(movie);
 });
 
 app.listen(3000, () => console.log('Server on http://localhost:3000'));

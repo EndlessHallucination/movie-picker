@@ -33,7 +33,6 @@ async function fetchMovies() {
 function renderMovies(movies: Movie[]) {
     const container = document.getElementById("movie-list")!;
 
-    console.log(movies);
     const html = movies.map(movie => {
         return `
             <div class="movie-card">
